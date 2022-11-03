@@ -14,6 +14,7 @@ import { ChangeOutput } from "../services/changeOutput"
 import { Blob } from "../services/blob"
 import { ContentModerator } from "../services/contentModerator"
 import { Xml } from "../services/xml"
+import { VideoIndexer } from "../services/videoIndexer"
 
 const changeOutput = new ChangeOutput()
 const blob = new Blob(process.env.AzureWebJobsStorage, process.env.BLOB_STORAGE_CONTAINER)
@@ -30,9 +31,35 @@ const automlNer = new AutoMlNer(process.env.AUTOML_NER_ENDPOINT, process.env.AUT
 const test = new Test()
 const contentModerator = new ContentModerator(process.env.CONTENT_MODERATOR_ENDPOINT,process.env.CONTENT_MODERATOR_KEY)
 const xml = new Xml()
+const videoIndexer = new VideoIndexer(process.env.AzureWebJobsStorage, process.env.BLOB_STORAGE_CONTAINER)
 
-const noCharge = (documents : number) : number =>{
-    return 0
+// const noCharge = (documents : number) : number =>{
+//     return 0
+// }
+
+const videoIndexerService : BpaService = {
+    bpaServiceId : "abc123",
+    inputTypes: [ "flv",
+    "mxf",
+    "gxf",
+    "mpg",
+    "wmv",
+    "asf",
+    "avi",
+    "mp4",
+    "mov",
+    "isma",
+    "ismv",
+    "mkv"],
+    outputTypes: ["videoIndexer"],
+    name: "videoIndexer",
+    process: videoIndexer.processBatch,
+    serviceSpecificConfig: {
+        
+    },
+    serviceSpecificConfigDefaults: {
+
+    }
 }
 
 const contentModeratorImageService : BpaService = {
@@ -273,6 +300,20 @@ const sttService : BpaService = {
     }
 }
 
+const sttBatchService : BpaService = {
+    bpaServiceId : "abc123",
+    inputTypes: ["wav","mp3"],
+    outputTypes: ["text"],
+    name: "sttBatch",
+    process: speech.processBatch,
+    serviceSpecificConfig: {
+
+    },
+    serviceSpecificConfigDefaults: {
+
+    }
+}
+
 const ocrService : BpaService = {
     bpaServiceId : "abc123",
     inputTypes: ["pdf","jpg"],
@@ -500,6 +541,7 @@ export const serviceCatalog = {
     "viewService" : viewService,
     "extractSummary" : extractSummary,
     "sttService" : sttService,
+    "sttBatchService" : sttBatchService,
     "layout" : layout,
     "translate" : translateService,
     "generalDocument" : generalDocument,
@@ -527,6 +569,7 @@ export const serviceCatalog = {
     "totxt" : toTxtService,
     "contentModeratorText" : contentModeratorTextService,
     "contentModeratorImage" : contentModeratorImageService,
-    "xmlToJson" : xmlToJsonService
+    "xmlToJson" : xmlToJsonService,
+    "videoIndexer" : videoIndexerService
 }
 
