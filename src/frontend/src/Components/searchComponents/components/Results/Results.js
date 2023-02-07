@@ -1,5 +1,6 @@
 import React from 'react';
 import Result from './Result/Result';
+import TableResult from './TableResult/TableResult'
 
 import "./Results.css";
 
@@ -10,7 +11,7 @@ export default function Results(props) {
 
     if (indexes.length === 0) return;
     if (index === indexes.length - 1) {
-      if (document[indexes[index]]) {
+      if (document && indexes.length > index) {
         const tempOut = [...results, document[indexes[index]]]
         return tempOut
       }
@@ -61,28 +62,58 @@ export default function Results(props) {
   }
 
   let results = props.documents.map((result) => {
-    return (
-      <div key={result.id}>
-        <Result
-          searchables={props.searchables}
-          document={result.filename.split('/')[result.filename.split('/').length - 1]}
-          data={result}
-          facets={getDocumentFacets(result, Object.keys(props.facets), props.filterCollections)}
-        />
-        
+    if (props.useTableSearch) {
+      return (
+        <div key={result.id}>
+          <TableResult
+            searchables={props.searchables}
+            document={result.filename.split('/')[result.filename.split('/').length - 1]}
+            data={result}
+            facets={getDocumentFacets(result, Object.keys(props.facets), props.filterCollections)}
+          />
+
         </div>);
+
+    } else {
+      return (
+        <div key={result.id}>
+          <Result
+            searchables={props.searchables}
+            document={result.filename.split('/')[result.filename.split('/').length - 1]}
+            data={result}
+            facets={getDocumentFacets(result, Object.keys(props.facets), props.filterCollections)}
+          />
+
+        </div>);
+    }
+
   });
 
-  let answers = props.answers.map((result) => {
-    return <div className="card answer">
-      <div className="card-body" style={{ textAlign: 'left' }}>
-        <div style={{ fontWeight: 'bold' }}>
-          Answer:
+  // let answers = props.answers.map((result) => {
+  //   return <div className="card answer">
+  //     <div className="card-body" style={{ textAlign: 'left' }}>
+  //       <div style={{ fontWeight: 'bold' }}>
+  //         Answer:
+  //       </div>
+  //       {result.text}
+  //     </div>
+  //   </div>
+  // });
+
+  let openAiAnswer = () => {
+    if (props.useOpenAiAnswer) {
+      return (<div className="card answer">
+        <div className="card-body" style={{ textAlign: 'left' }}>
+          <div style={{ fontWeight: 'bold' }}>
+            OpenAI Answer:
+          </div>
+          {props.openAiAnswer}
         </div>
-        {result.text}
       </div>
-    </div>
-  });
+      );
+    }
+  }
+
 
   let beginDocNumber = Math.min(props.skip + 1, props.count);
   let endDocNumber = Math.min(props.skip + props.top, props.count);
@@ -91,7 +122,7 @@ export default function Results(props) {
     <div>
       <p className="results-info">Showing {beginDocNumber}-{endDocNumber} of {props.count.toLocaleString()} results</p>
       <div className="row">
-        {answers}
+        {openAiAnswer()}
         {results}
       </div>
     </div>
