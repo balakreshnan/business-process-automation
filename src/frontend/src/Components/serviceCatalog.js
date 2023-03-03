@@ -25,6 +25,36 @@ import openai from '../images/openai.svg'
 import { getContentModeratorPricing, getCustomLanguagePricing, getDocumentTranslatorPricing, getFormRecCustomPricing, getFormRecPrebuiltPricing, getFormRecReadPricing, getHealthLanguagePricing, getLanguagePricing, getOcrPricing, getSpeechPricing, getTranslationPricing, noCharge } from './Prices/price'
 
 export const sc = {
+    "redactPdf": {
+        "bpaServiceId": "abc123",
+        "inputTypes": [
+            "recognizePiiEntities"
+        ],
+        "outputTypes": [
+            "redactPdf"
+        ],
+        "image": pdf,
+        "label": "Redacts PII from a PDF.",
+        "name": "redactPdf",
+        "serviceSpecificConfig": {},
+        "serviceSpecificConfigDefaults": {},
+        getPrice : noCharge
+    },
+    "spliceDocument": {
+        "bpaServiceId": "abc123",
+        "inputTypes": [
+            "pdf"
+        ],
+        "outputTypes": [
+            "pdf"
+        ],
+        "image": pdf,
+        "label": "Splice Document",
+        "name": "spliceDocument",
+        "serviceSpecificConfig": {},
+        "serviceSpecificConfigDefaults": {},
+        getPrice : noCharge
+    },
     "openaiEmbeddings": {
         "bpaServiceId": "abc123",
         "inputTypes": [
